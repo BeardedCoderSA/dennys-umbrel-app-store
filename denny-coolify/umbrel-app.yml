@@ -4,7 +4,7 @@ name: Coolify
 tagline: A lightweight platform to deploy apps easily
 icon: https://raw.githubusercontent.com/dennysubke/dennys-umbrel-app-gallery/main/denny-coolify/logo.png
 category: developer tools
-version: "4.1.2"
+version: "4.4.6"
 port: 8527
 description: >-
   🧊 Coolify is a modern platform designed to simplify the deployment and management of web applications. It provides an intuitive interface that allows developers to launch and maintain projects with minimal configuration. By automating complex DevOps processes, it eliminates the need for manual server setup, making application delivery faster and more reliable.
@@ -36,10 +36,10 @@ gallery:
   - https://raw.githubusercontent.com/dennysubke/dennys-umbrel-app-gallery/main/denny-coolify/4.jpg
   - https://raw.githubusercontent.com/dennysubke/dennys-umbrel-app-gallery/main/denny-coolify/5.jpg
 releaseNotes: >-
-  This release updates Coolify to version 4.1.2 and improves deployment security, authentication, permission validation, and configuration checks. It also fixes issues with private Git submodules, SSH deploy keys, preview deployments, environment variables, and container image tags. 
-  
-  
-  Additional stability and reliability improvements have been added across the deployment workflow.
+  This release updates Coolify to version 4.4.6.
+
+
+  The realtime server and the browser terminal now run inside the main Coolify container, so the separate realtime service has been removed. Ports 6001 and 6002 stay the same. Uploaded avatars and project icons are now stored persistently.
 dependencies: []
 path: ""
 defaultUsername: ""

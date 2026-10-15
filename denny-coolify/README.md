@@ -16,13 +16,13 @@ For public applications, forward the required external ports to `8531` and `8532
 
 ## Architecture
 
-Coolify connects by SSH to the bundled `coolify-testing-host`. Its Docker CLI uses a Unix socket belonging only to the bundled `coolify-docker` daemon. Database, cache, and realtime services use app-specific DNS names to prevent collisions with other Umbrel apps. Persistent state is stored below `${APP_DATA_DIR}/data/`.
+Coolify connects by SSH to the bundled `coolify-testing-host`. Its Docker CLI uses a Unix socket belonging only to the bundled `coolify-docker` daemon. The realtime server and the browser terminal run inside the Coolify dashboard container (since Coolify 4.4). Database and cache services use app-specific DNS names to prevent collisions with other Umbrel apps. Persistent state is stored below `${APP_DATA_DIR}/data/`.
 
 The Docker-in-Docker service needs privileged mode because it runs a complete Docker daemon. This is intentionally isolated from Umbrel's own Docker daemon.
 
 ## Permissions
 
-No manual `chmod` or `chown` command is required. A one-shot initialization service creates Coolify's required directories and assigns them to Coolify's runtime UID `9999` before the dashboard and realtime containers start.
+No manual `chmod` or `chown` command is required. A one-shot initialization service creates Coolify's required directories and assigns them to Coolify's runtime UID `9999` before the dashboard container starts.
 
 ## First start
 
