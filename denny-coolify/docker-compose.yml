@@ -92,8 +92,11 @@ services:
 
   # Coolify's Docker Desktop mode controls its local server through SSH. This
   # bridge exposes only the isolated Docker daemon above.
+  # Replacement for the no-longer-public ghcr.io/coollabsio/coolify-testing-host
+  # image: plain Alpine with sshd + Docker CLI. authorized_keys is derived from
+  # the private keys Coolify generates in /data/coolify/ssh/keys.
   coolify-testing-host:
-    image: ghcr.io/coollabsio/coolify-testing-host:latest@sha256:88d0826eb8ae8cecb0c49eaaa9e321a7bf81931a48c8492366607eb211371d81
+    image: alpine:3.21
     init: true
     restart: on-failure
     depends_on:
@@ -104,9 +107,22 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
+        apk add --no-cache openssh-server openssh-keygen docker-cli docker-cli-compose bash curl git rsync jq
+        ssh-keygen -A
+        mkdir -p /root/.ssh && chmod 700 /root/.ssh
+        (
+          while true; do
+            for k in /data/coolify/ssh/keys/*; do
+              [ -f "$$k" ] && ssh-keygen -y -f "$$k" 2>/dev/null
+            done > /root/.ssh/authorized_keys.tmp
+            chmod 600 /root/.ssh/authorized_keys.tmp
+            mv /root/.ssh/authorized_keys.tmp /root/.ssh/authorized_keys
+            sleep 10
+          done
+        ) &
         while [ ! -S /docker-socket/docker.sock ]; do sleep 1; done
         ln -sf /docker-socket/docker.sock /var/run/docker.sock
-        exec /usr/sbin/sshd -D -o ListenAddress=0.0.0.0 -o Port=22
+        exec /usr/sbin/sshd -D -e -o ListenAddress=0.0.0.0 -o Port=22 -o PermitRootLogin=prohibit-password -o PasswordAuthentication=no -o PubkeyAuthentication=yes
     volumes:
       - ${APP_DATA_DIR}/data/docker:/docker-socket
       - ${APP_DATA_DIR}/data/coolify:/data/coolify
@@ -119,7 +135,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 30
-      start_period: 20s
+      start_period: 60s
 
   coolify-db:
     image: postgres:15@sha256:c189d272e4fcdd1ac419adee675d30be3d389c22ee770d593f15819d22a68a0d
